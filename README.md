@@ -24,14 +24,20 @@ Once virtualenv is activated, proceed with the following to see the different op
 
 Then run:
 
-`python MapFuse.py -d data/gps_data.csv -b data/osm/segments.shp -t 2015-11-01 -p 1`
+`python MapFuse.py -d data/gps_data.csv -b data/osm/doha_qatar_osm_roads.shp -t 2015-11-01 -p 1`
 
-* -d: path to the csv data file
+* -d: path to the csv data file in the format: speed, data_time, bearing, lon, lat
 * -b: path to the shape file of the base map (QMIC, OSM, etc.)
 * -t: the starting date (yyyy-mm-dd) of the gps points to consider in the fusion
 * -p: 1 to plot the fused map, 0 not to plot it.
 
 The output fused map is saved into `data/fused_map.geojson`
+
+#### NB:
+
+* bearing: is the angle from north, values in [0: 360]. If not available, then you can infer it from successive points.
+
+* speed: in km/h, can be inferred from the data as well.
 
 ## Visualizing the output:
 The fusion of the two maps can be rendered as follows:
