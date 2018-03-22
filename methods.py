@@ -655,7 +655,7 @@ def computeclusters(datapointwts):
 	for ss in range(2):
 		nseeds, cost, avgspeed, pointsperseed = newmeans(datapointwts, seeds)
 		print(ss, cost)
-		if float((oldcost-cost))/cost<0.0001:
+		if float((oldcost-cost))/cost < 0.0001:
 			break
 		seeds = nseeds
 		oldcost = cost

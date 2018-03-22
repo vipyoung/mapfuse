@@ -26,15 +26,32 @@ Then run:
 
 `python MapFuse.py -d data/gps_data.csv -b data/osm/doha_qatar_osm_roads.shp -t 2015-11-01 -p 1`
 
-* -d: path to the csv data file in the format: speed, data_time, bearing, lon, lat
+* -d: path to the csv data file in the format: `speed, data_time, bearing, lon, lat`
 * -b: path to the shape file of the base map (QMIC, OSM, etc.)
 * -t: the starting date (yyyy-mm-dd) of the gps points to consider in the fusion
 * -p: 1 to plot the fused map, 0 not to plot it.
 
 The output fused map is saved into `data/fused_map.geojson`
 
-#### NB:
 
+#### IMPORTANT:
+
+The input gps_data file needs to be sorted by trajectory_id (or vehicle_id), then date_time.
+This is very important to make sure we create correct trajectories internally.
+
+For instance, assume you have a file (file_1.csv) with the following format:
+`traj_id, angle, data_time, speed, lon, lat.`
+
+1- You first need to sort it this way:
+`sort -t',' -k1,1 -k3,3 file_1.csv > file_2.csv`
+
+2- Remove the traj_id information:
+`cut -d',' -f2,3,4,5,6 file_2.csv > file_3.csv`
+
+3- Use this file_3.csv as the input for MapFuse.
+
+
+#### NB:
 * bearing: is the angle from north, values in [0: 360]. If not available, then you can infer it from successive points.
 
 * speed: in km/h, can be inferred from the data as well.
