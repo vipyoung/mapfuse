@@ -24,7 +24,7 @@ Once virtualenv is activated, proceed with the following to see the different op
 
 Then run:
 
-`python MapFuse.py -d data/gps_data.csv -b data/segments/segments.shp -t 2015-11-01 -p 1`
+`python MapFuse.py -d data/gps_data.csv -b data/osm/segments.shp -t 2015-11-01 -p 1`
 
 * -d: path to the csv data file
 * -b: path to the shape file of the base map (QMIC, OSM, etc.)
