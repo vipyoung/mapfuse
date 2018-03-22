@@ -27,7 +27,7 @@ Then run:
 `python MapFuse.py -d data/gps_data.csv -b data/osm/doha_qatar_osm_roads.shp -t 2015-11-01 -p 1`
 
 * -d: path to the csv data file in the format: `speed, data_time, bearing, lon, lat`
-* -b: path to the shape file of the base map (QMIC, OSM, etc.)
+* -b: path to the shape file of the base map (OSM, etc.)
 * -t: the starting date (yyyy-mm-dd) of the gps points to consider in the fusion
 * -p: 1 to plot the fused map, 0 not to plot it.
 
