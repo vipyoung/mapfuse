@@ -1,6 +1,5 @@
 """
 Author: Sofiane
-Let's find a good way to represent OSM data: graph and metadata.
 
 """
 import json
@@ -94,39 +93,3 @@ class OSMReader():
 				g.add_path(path)
 		return g
 
-	@staticmethod
-	def build_road_network_from_qmic_shapefile(shape_file):
-		"""
-		This function builds a road graph of a city from its road shapefile.
-		The idea is to create an edge for each consecutive nodes in each path.
-		 Use fiona to read the shape file.
-		:param shape_file: the road shape file of the city
-		:return: a graph
-		"""
-		g = nx.DiGraph()
-		sh = fiona.open(shape_file)
-		for obj in sh:
-			maxspeed, lanes, oneway =  obj['properties']['speedlimit'], obj['properties']['lanes'], obj['properties']['isbidirect']
-			path = obj['geometry']['coordinates']
-			for i in range(1, len(path)):
-				g.add_edge(path[i - 1], path[i])
-				g.node[path[i - 1]] = {'lat': path[i-1][1], 'lon': path[i-1][0], 'speedlimit':maxspeed, 'lanes':lanes, 'isbidirect': oneway}
-			if obj['properties']['isbidirect'] == 'T':
-				path.reverse()
-				g.add_path(path)
-			g.node[path[-1]] = {'lat': path[-1][1], 'lon': path[-1][0], 'speedlimit': maxspeed, 'lanes': lanes, 'isbidirect': oneway}
-		return g
-
-if __name__ == '__main__':
-	osm = OSMReader()
-	fname = '/home/sofiane/PycharmProjects/cityRobustness/data/doha_qatar.osm/doha_qatar_osm_roads.shp'
-	g = osm.build_road_network_from_osm_shapefile(fname)
-	lane_speed = []
-	for node in g.nodes():
-		#print g.node[node]
-		try:
-			lane_speed.append(g.node[node]['lanes'])
-			lane_speed.append(g.node[node]['maxspeed'])
-		except:
-			print 'problem', node, g.node[node]
-	print set(lane_speed)
