@@ -10,8 +10,8 @@ if __name__ =='__main__':
 	# Default parameters
 	nsamples = 20000000
 	datestr = '2015-11-01'
-	data_path = 'data/GPS_Dataprivatebus1130.csv'
-	basemap_path = 'data/segments/segments.shp'
+	data_path = 'data/gps_data.csv'
+	basemap_path = 'data/osm/segments.shp'
 	plot_map = 0
 
 	(opts, args) = getopt.getopt(sys.argv[1:], "d:b:t:p:h")
@@ -55,9 +55,9 @@ if __name__ =='__main__':
 
 	# 2. Run the map fusion code.
 	start = time.time()
-	# Work on the static map: QMIC, OSM, etc.
-	G = OSMReader.build_road_network_from_qmic_shapefile(basemap_path)
-	print('Generated QMIC graph from shapefiles in:', time.time() - start)
+	# Work on the static map: OSM, etc.
+	G = OSMReader.build_road_network_from_osm_shapefile(basemap_path)
+	print('Generated OSM graph from shapefiles in:', time.time() - start)
 	seedsosm, neighborsosm = getosmmap(base_map=G)
 	seedsosm, neighborsosm = densifymap(seedsosm, neighborsosm, 20)
 	print ('osm map read/densified: ', time.time()-start, len(seedsosm), \

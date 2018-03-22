@@ -323,7 +323,7 @@ def dist2seed(point1, point2):
 	anglecost = min(angledist(point1[2],AA)+angledist(point2[2],AA), angledist(point1[2],180+AA)+angledist(point2[2],180+AA))
 	return(111257*np.abs(point1[0]-point2[0])+70197*np.abs(point1[1]-point2[1])+ 100.0/180*max(0,anglecost-30))
 
-def getdata(nsamples, datestart, datestr, datapath):
+def getdata_all_attributes(nsamples, datestart, datestr, datapath):
 	datapointwts = []
 	lats = []
 	lons = []
@@ -340,6 +340,30 @@ def getdata(nsamples, datestart, datestr, datapath):
 				LL = (float(zz[5][:8]), float(zz[6][:8]))
 				angle = float(zz[4])-180
 				speed = float(zz[2])
+				lats.append(LL[0])
+				lons.append(LL[1])
+				pointwts = (LL[0], LL[1], angle, speed, j, ts)
+				datapointwts.append(pointwts)
+	return(datapointwts)
+
+def getdata(nsamples, datestart, datestr, datapath):
+	datapointwts = []
+	lats = []
+	lons = []
+	j = 0
+	with open(datapath,'rb') as f:
+		f.readline()
+		for line in f:
+			j = j+1
+			if j > nsamples:
+				break
+			line = line[:-1].decode('ascii', 'ignore')
+			zz = line.split(",")
+			if zz[1][:10] < datestr and zz[1][:10] >= datestart:
+				ts = time.mktime(datetime.datetime.strptime(zz[1], "%Y-%m-%d %H:%M:%S").timetuple())
+				LL = (float(zz[3][:8]), float(zz[4][:8]))
+				angle = float(zz[2])-180
+				speed = float(zz[0])
 				lats.append(LL[0])
 				lons.append(LL[1])
 				pointwts = (LL[0], LL[1], angle, speed, j, ts)
@@ -628,7 +652,7 @@ def computeclusters(datapointwts):
 	datapoint = [(x[0], x[1], x[2]) for x in datapointwts]
 	seeds = getseeds(datapoint, 20)
 	oldcost = 100000000
-	for ss in range(50):
+	for ss in range(2):
 		nseeds, cost, avgspeed, pointsperseed = newmeans(datapointwts, seeds)
 		print(ss, cost)
 		if float((oldcost-cost))/cost<0.0001:
@@ -1172,8 +1196,8 @@ def read_osm_wtype_sa(G):
 	for kk in [1]:
 		bcent =  betweenness_centrality(G, k=kk)
 	for n_id in G.nodes_iter():
-		lanes[n_id] = G.node[n_id]['lanes']
-		maxspeed[n_id] = G.node[n_id]['speedlimit']
+		lanes[n_id] = G.node[n_id].get('lanes', None)
+		maxspeed[n_id] = G.node[n_id].get('maxspeed', None)
 		if 1 > 0:
 			insidenode[n_id] = 1
 			nodelat.append(G.node[n_id]['lat'])
@@ -1196,7 +1220,7 @@ def read_osm_wtype(filename_or_stream):
 	insidenode = {}
 	lanes = {}
 	maxspeed = {}
-	G = nx.read_gpickle('data/tmp/qmic_network.gpickle')
+	G = nx.read_gpickle('data/tmp/osm_network.gpickle')
 	nodelat = []
 	nodelon = []
 	nodeid = []
@@ -1208,7 +1232,7 @@ def read_osm_wtype(filename_or_stream):
 		bcent =  betweenness_centrality(G, k=kk)
 	for n_id in G.nodes_iter():
 		lanes[n_id] = G.node[n_id]['lanes']
-		maxspeed[n_id] = G.node[n_id]['speedlimit']
+		maxspeed[n_id] = G.node[n_id]['maxspeed']
 		if 1 > 0:
 			insidenode[n_id] = 1
 			nodelat.append(G.node[n_id]['lat'])
